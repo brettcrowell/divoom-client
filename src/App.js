@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
-import {divoomToHex} from "./constants";
 import Swatch from './Swatch';
+import {postToDivoom} from "./divoomAdapterHelper";
 import './App.css';
 
 class App extends Component {
@@ -8,6 +8,7 @@ class App extends Component {
   constructor(props) {
     super(props);
     this.state = {
+      address: "http://192.168.1.241:1989",
       pixelArray: [
         [0, 0, 0, 0, 0, 0, 0, 0, 6, 0],
         [0, 0, 0, 0, 0, 0, 0, 6, 6, 0],
@@ -21,7 +22,13 @@ class App extends Component {
         [0, 6, 6, 6, 0, 0, 0, 6, 6, 0]
       ]
     };
+    this.updateServerAddress = this.updateServerAddress.bind(this);
     this.updatePixelColor = this.updatePixelColor.bind(this);
+    this.submitPixelArray = this.submitPixelArray.bind(this);
+  }
+
+  updateServerAddress(address) {
+    this.setState({ address })
   }
 
   updatePixelColor(row, col, newColor) {
@@ -30,8 +37,21 @@ class App extends Component {
     this.setState({pixelArray});
   }
 
+  submitPixelArray() {
+    const { address, pixelArray } = this.state;
+
+    // divoom server expects a flat array of divoomColors
+    const flattenedPixelArray = pixelArray.reduce((prev, row) => ([
+      ...prev,
+      ...row
+    ]), []);
+
+    postToDivoom(address, "show_pixel_array", flattenedPixelArray);
+
+  }
+
   render() {
-    const {pixelArray} = this.state;
+    const {address, pixelArray} = this.state;
     return (
       <div className="App">
         <h1>Divoom LED Speaker Client</h1>
@@ -53,6 +73,10 @@ class App extends Component {
           ))}
           </tbody>
         </table>
+        <h3>Submit your creation!</h3>
+        Server Address:
+        <input type="text" value={address} onChange={this.updateServerAddress}/>
+        <button onClick={this.submitPixelArray}>Submit!</button>
       </div>
     );
   }
