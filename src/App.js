@@ -21,6 +21,13 @@ class App extends Component {
         [0, 6, 6, 6, 0, 0, 0, 6, 6, 0]
       ]
     };
+    this.updatePixelColor = this.updatePixelColor.bind(this);
+  }
+
+  updatePixelColor(row, col, newColor) {
+    const {pixelArray} = this.state;
+    pixelArray[row][col] = newColor;
+    this.setState({pixelArray});
   }
 
   render() {
@@ -29,15 +36,22 @@ class App extends Component {
       <div className="App">
         <h1>Divoom LED Speaker Client</h1>
         <table>
+          <tbody>
           {pixelArray.map((pixels, row) => (
             <tr key={row}>
-              {pixels.map((pixel, column) => (
-                <td key={column}>
-                  <Swatch divoomColor={pixel}/>
+              {pixels.map((pixel, col) => (
+                <td key={col}>
+                  <Swatch
+                    row={row}
+                    col={col}
+                    divoomColor={pixel}
+                    onChange={this.updatePixelColor}
+                  />
                 </td>
               ))}
             </tr>
           ))}
+          </tbody>
         </table>
       </div>
     );
