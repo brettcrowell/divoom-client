@@ -24,6 +24,7 @@ class App extends Component {
     };
     this.updateServerAddress = this.updateServerAddress.bind(this);
     this.updatePixelColor = this.updatePixelColor.bind(this);
+    this.clearPixels = this.clearPixels.bind(this);
     this.submitPixelArray = this.submitPixelArray.bind(this);
   }
 
@@ -35,6 +36,23 @@ class App extends Component {
     const {pixelArray} = this.state;
     pixelArray[row][col] = newColor;
     this.setState({pixelArray});
+  }
+  
+  clearPixels() {
+    this.setState({
+      pixelArray: [
+        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+      ]
+    })
   }
 
   submitPixelArray() {
@@ -73,6 +91,8 @@ class App extends Component {
           ))}
           </tbody>
         </table>
+        <h3>Options</h3>
+        <button onClick={this.clearPixels}>Clear Pixels</button>
         <h3>Submit your creation!</h3>
         Server Address:
         <input type="text" value={address} onChange={this.updateServerAddress}/>
