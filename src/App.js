@@ -8,7 +8,7 @@ class App extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      address: "http://192.168.1.241:1989",
+      address: "http://192.168.128.52:1989",
       pixelArray: [
         [0, 0, 0, 0, 0, 0, 0, 0, 6, 0],
         [0, 0, 0, 0, 0, 0, 0, 6, 6, 0],
@@ -29,8 +29,8 @@ class App extends Component {
     this.submitPixelArray = this.submitPixelArray.bind(this);
   }
 
-  updateServerAddress(address) {
-    this.setState({ address })
+  updateServerAddress({ target: { value }}) {
+    this.setState({ address: value })
   }
 
   updatePixelColor(row, col, newColor) {
