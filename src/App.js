@@ -8,6 +8,7 @@ class App extends Component {
   constructor(props) {
     super(props);
     this.state = {
+      showData: false,
       address: "http://192.168.128.52:1989",
       pixelArray: [
         [0, 0, 0, 0, 0, 0, 0, 0, 6, 0],
@@ -24,8 +25,9 @@ class App extends Component {
     };
     this.updateServerAddress = this.updateServerAddress.bind(this);
     this.updatePixelColor = this.updatePixelColor.bind(this);
+    this.updatePixelArray = this.updatePixelArray.bind(this);
+    this.toggleData = this.toggleData.bind(this);
     this.clearPixels = this.clearPixels.bind(this);
-    this.showPixelData = this.showPixelData.bind(this);
     this.submitPixelArray = this.submitPixelArray.bind(this);
   }
 
@@ -37,6 +39,31 @@ class App extends Component {
     const {pixelArray} = this.state;
     pixelArray[row][col] = newColor;
     this.setState({pixelArray});
+  }
+
+  updatePixelArray({target: {value}}) {
+    const parsedVals =
+      value.replace(/ |\n/g, "")
+        .padEnd(100, 0)
+        .substring(0, 100)
+        .split("")
+        .map(num => parseInt(num, 10));
+
+    const nextPixelArray = [];
+
+    parsedVals.forEach((val, v) => {
+      if(v % 10 === 0) {
+        nextPixelArray.push([]);
+      }
+      nextPixelArray[nextPixelArray.length - 1].push(val);
+    });
+
+    this.setState({ pixelArray: nextPixelArray });
+
+  }
+
+  toggleData() {
+    this.setState({ showData: !this.state.showData });
   }
   
   clearPixels() {
@@ -56,12 +83,11 @@ class App extends Component {
     })
   }
 
-  showPixelData() {
-    const {pixelArray} = this.state;
-    const stringPixelArray = pixelArray.reduce((prev, row) => (
-      `${prev}\n${row.join("   ")}`
+  getPixelArrayString(pixelArray) {
+    const stringPixelArray = pixelArray.reduce((prev, row, r) => (
+      `${prev}${r > 0 ? "\n" : ""}${row.join("  ")}`
     ), "");
-    alert(stringPixelArray);
+    return stringPixelArray;
   }
 
   submitPixelArray() {
@@ -78,7 +104,7 @@ class App extends Component {
   }
 
   render() {
-    const {address, pixelArray} = this.state;
+    const {showData, address, pixelArray} = this.state;
     return (
       <div className="App">
         <h1>Divoom LED Speaker Client</h1>
@@ -102,7 +128,19 @@ class App extends Component {
         </table>
         <h3>Options</h3>
         <button onClick={this.clearPixels}>Clear Pixels</button>
-        <button onClick={this.showPixelData}>View Data</button>
+        <button onClick={this.toggleData}>{showData ? "Hide" : "Show"} Data</button>
+        <br/>
+        {showData && ([
+          <br/>,
+          <textarea
+            style={({fontFamily: "Courier New"})}
+            rows="10"
+            cols="28"
+            value={this.getPixelArrayString(pixelArray)}
+            onChange={this.updatePixelArray}
+          />
+        ])
+        }
         <h3>Submit your creation!</h3>
         Server Address:
         <input type="text" value={address} onChange={this.updateServerAddress}/>
