@@ -31,15 +31,20 @@ class UploadImage extends Component {
         // set size proportional to image
         canvas.height = canvas.width = 10;
 
+        let offsetWidth = 0;
+        let offsetHeight = 0;
+
         if(img.width > img.height) {
           img.height = img.height * (10 / img.width);
           img.width = 10;
+          offsetHeight = Math.floor((10 - img.height) / 2);
         } else {
           img.width = img.width * (10 / img.height);
           img.height = 10;
+          offsetWidth = Math.floor((10 - img.width) / 2);
         }
 
-        ctx.drawImage(img, 0, 0, img.width, img.height);
+        ctx.drawImage(img, offsetWidth, offsetHeight, img.width, img.height);
 
         const { data } = ctx.getImageData(0, 0, canvas.width, canvas.height);
 
@@ -54,7 +59,7 @@ class UploadImage extends Component {
 
       };
 
-      img.style.imageRendering = "pixelated";
+      img.style.imageRendering = "crisp-edges";
       img.src = reader.result;
 
     };
