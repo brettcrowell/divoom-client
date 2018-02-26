@@ -4,6 +4,7 @@ import {GithubPicker} from 'react-color';
 import {postToDivoom} from "./divoomAdapterHelper";
 import {divoomToHex, hexToDivoom} from "./constants";
 import './Client.css';
+import UploadImage from "./UploadImage";
 
 class Client extends Component {
 
@@ -180,7 +181,8 @@ class Client extends Component {
           />
           <hr/>
           <button onClick={this.clearPixels}>Clear Pixels</button>
-          <button onClick={this.toggleData}>{showData ? "Hide" : "Show"} Data</button>
+          <UploadImage onUpload={this.updatePixelArray}/>
+        <button onClick={this.toggleData}>{showData ? "Hide" : "Show"} Data</button>
           <br/>
           {showData && ([
             <br/>,

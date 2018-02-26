@@ -2,7 +2,7 @@ import React, {Component} from 'react';
 import {mapColorToPalette, rgbToHex} from "./util";
 import {hexToDivoom} from "./constants";
 
-class Generate extends Component {
+class UploadImage extends Component {
   constructor(props) {
     super(props);
     this.state = {pixelArray: []};
@@ -10,6 +10,8 @@ class Generate extends Component {
   }
 
   handleImageChange(e) {
+
+    const { onUpload } = this.props;
 
     e.preventDefault();
 
@@ -43,13 +45,12 @@ class Generate extends Component {
 
         const pixelArray = [];
 
-        for (var i = 0; i < data.length; i += 4) {
+        for (let i = 0; i < data.length; i += 4) {
           const mappedColor = mapColorToPalette(data[i], data[i + 1], data[i + 2]);
-          console.log(mappedColor);
           pixelArray.push(hexToDivoom[rgbToHex(mappedColor)] || 0);
         }
 
-        this.setState({ pixelArray });
+        onUpload({target: {value: pixelArray.join(" ")}});
 
       };
 
@@ -63,28 +64,14 @@ class Generate extends Component {
   }
 
   render() {
-    let {imagePreviewUrl} = this.state;
-    let $imagePreview = null;
-    if (imagePreviewUrl) {
-      $imagePreview = (<img src={imagePreviewUrl}/>);
-    } else {
-      $imagePreview = (
-        <div className="previewText">Please select an Image for Preview</div>);
-    }
-
     return (
-      <div className="previewComponent">
-        <input
-          className="fileInput"
-          type="file"
-          onChange={this.handleImageChange}
-        />
-        <div className="imgPreview">
-          /*{$imagePreview}*/
-        </div>
-      </div>
+      <input
+        className="fileInput"
+        type="file"
+        onChange={this.handleImageChange}
+      />
     )
   }
 }
 
-export default Generate;
+export default UploadImage;
