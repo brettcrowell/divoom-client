@@ -59,7 +59,7 @@ class UploadImage extends Component {
 
     };
 
-    reader.readAsDataURL(file)
+    file && reader.readAsDataURL(file)
 
   }
 
