@@ -1,9 +1,11 @@
 import React, {Component} from 'react';
+import {mapColorToPalette, rgbToHex} from "./util";
+import {hexToDivoom} from "./constants";
 
 class Generate extends Component {
   constructor(props) {
     super(props);
-    this.state = {file: '', imagePreviewUrl: ''};
+    this.state = {pixelArray: []};
     this.handleImageChange = this.handleImageChange.bind(this)
   }
 
@@ -15,13 +17,49 @@ class Generate extends Component {
     let file = e.target.files[0];
 
     reader.onloadend = () => {
-      this.setState({
-        file: file,
-        imagePreviewUrl: reader.result
-      });
+
+      const canvas = document.createElement("canvas");
+      const ctx = canvas.getContext("2d");
+      const img = new Image();
+
+      img.onload = function () {
+
+        ctx.imageSmoothingQuality = "high";
+
+        // set size proportional to image
+        canvas.height = canvas.width = 10;
+
+        if(img.width > img.height) {
+          img.height = img.height * (10 / img.width);
+          img.width = 10;
+        } else {
+          img.width = img.width * (10 / img.height);
+          img.height = 10;
+        }
+
+        ctx.drawImage(img, 0, 0, img.width, img.height);
+
+        const { data } = ctx.getImageData(0, 0, canvas.width, canvas.height);
+
+        const pixelArray = [];
+
+        for (var i = 0; i < data.length; i += 4) {
+          const mappedColor = mapColorToPalette(data[i], data[i + 1], data[i + 2]);
+          console.log(mappedColor);
+          pixelArray.push(hexToDivoom[rgbToHex(mappedColor)] || 0);
+        }
+
+        this.setState({ pixelArray });
+
+      };
+
+      img.style.imageRendering = "pixelated";
+      img.src = reader.result;
+
     };
 
     reader.readAsDataURL(file)
+
   }
 
   render() {
@@ -42,7 +80,7 @@ class Generate extends Component {
           onChange={this.handleImageChange}
         />
         <div className="imgPreview">
-          {$imagePreview}
+          /*{$imagePreview}*/
         </div>
       </div>
     )
