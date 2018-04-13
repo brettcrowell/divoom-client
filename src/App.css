@@ -1,5 +1,10 @@
 .App {
   text-align: left;
+  display: flex;
+}
+
+.App section {
+  flex: 1;
 }
 
 .App-logo {
@@ -29,4 +34,5 @@
 
 table {
   background-color: #222222;
+  border-spacing: 0;
 }
