@@ -13,6 +13,7 @@ class Client extends Component {
     this.state = {
       showData: false,
       address: "http://192.168.128.52:1989",
+      device: "11:75:58:72:46:9A",
       currentColor: 6,
       pixelArray: [
         [0, 0, 0, 0, 0, 0, 0, 0, 6, 0],
@@ -28,6 +29,7 @@ class Client extends Component {
       ]
     };
     this.updateServerAddress = this.updateServerAddress.bind(this);
+    this.updateDeviceAddress = this.updateDeviceAddress.bind(this);
     this.updatePixelColor = this.updatePixelColor.bind(this);
     this.updatePixelArray = this.updatePixelArray.bind(this);
     this.toggleData = this.toggleData.bind(this);
@@ -43,6 +45,10 @@ class Client extends Component {
 
   updateServerAddress({ target: { value }}) {
     this.setState({ address: value })
+  }
+
+  updateDeviceAddress({ target: { value }}) {
+    this.setState({ device: value });
   }
 
   onColorPicked({hex}) {
@@ -106,7 +112,7 @@ class Client extends Component {
   }
 
   submitPixelArray() {
-    const { address, pixelArray } = this.state;
+    const { address, device, pixelArray } = this.state;
 
     // divoom server expects a flat array of divoomColors
     const flattenedPixelArray = pixelArray.reduce((prev, row) => ([
@@ -114,7 +120,7 @@ class Client extends Component {
       ...row
     ]), []);
 
-    postToDivoom(address, "show_pixel_array", flattenedPixelArray);
+    postToDivoom(address, device, "show_pixel_array", flattenedPixelArray);
 
   }
 
@@ -141,7 +147,7 @@ class Client extends Component {
   }
 
   render() {
-    const {showData, address, pixelArray} = this.state;
+    const {showData, address, device, pixelArray} = this.state;
     return (
       <div className="App" onMouseUp={this.onMouseUp}>
         <section>
@@ -198,6 +204,17 @@ class Client extends Component {
           <h3>Submit your creation!</h3>
           Server Address:
           <input type="text" value={address} onChange={this.updateServerAddress}/>
+          <br/>
+          Device Address:
+          <select onChange={this.updateDeviceAddress} value={device}>
+            <option value="11:75:58:72:46:9A">
+              11:75:58:72:46:9A
+            </option>
+            <option value="11:75:58:F4:EE:2E">
+              11:75:58:F4:EE:2E
+            </option>
+          </select>
+          <br/><br/>
           <button onClick={this.submitPixelArray}>Submit!</button>
         </section>
       </div>
