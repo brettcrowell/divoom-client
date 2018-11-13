@@ -19,3 +19,13 @@ export const hexToDivoom = {
   "#00ffff": 6,
   "#ffffff": 7
 };
+
+function extractComponentValues(string) {
+  return string.replace(/[^0-9.,]/g, '').split(',').map(x => parseInt(x))
+}
+function componentToHex(c) {
+  const hex = c.toString(16)
+  return hex.length === 1 ? `0${hex}` : hex
+}
+
+export const rgbToHex = rgb => `#${extractComponentValues(rgb).map(c => componentToHex(c)).join('')}`

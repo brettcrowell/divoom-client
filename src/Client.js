@@ -2,7 +2,7 @@ import React, {Component} from 'react';
 import Swatch from './Swatch';
 import {GithubPicker} from 'react-color';
 import {postToDivoom} from "./divoomAdapterHelper";
-import {divoomToHex, hexToDivoom} from "./constants";
+import {divoomToHex, hexToDivoom, rgbToHex} from "./constants";
 import './Client.css';
 import UploadImage from "./UploadImage";
 
@@ -11,6 +11,7 @@ class Client extends Component {
   constructor(props) {
     super(props);
     this.state = {
+      defaultColor: 0,
       showData: false,
       address: "http://192.168.128.52:1989",
       device: "11:75:58:72:46:9A",
@@ -124,12 +125,22 @@ class Client extends Component {
 
   }
 
+  setUpdateColor = backgroundColor => {
+    const {currentColor, defaultColor} = this.state
+    const hasColor = hexToDivoom[rgbToHex(backgroundColor)] !== defaultColor
+    const updateColor = hasColor ? defaultColor : currentColor
+    this.setState({updateColor})
+  }
+
   onMouseDown(event) {
     this.isDragging = true;
 
     if (event.target && event.target.dataset.row) {
       const { row, col } = event.target.dataset;
-      this.updatePixelColor(parseInt(row), parseInt(col), this.state.currentColor);
+      const {backgroundColor} = event.target.style
+      const {updateColor} = this.state
+      this.setUpdateColor(backgroundColor)
+      this.updatePixelColor(parseInt(row), parseInt(col), updateColor);
     }
   }
 
@@ -137,7 +148,8 @@ class Client extends Component {
     if (this.isDragging) {
       if (event.target && event.target.dataset.row) {
         const { row, col } = event.target.dataset;
-        this.updatePixelColor(parseInt(row), parseInt(col), this.state.currentColor);
+        const {updateColor} = this.state
+        this.updatePixelColor(parseInt(row), parseInt(col), updateColor);
       }
     }
   }
